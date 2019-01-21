@@ -79,6 +79,24 @@ class Hash
         return $lcn;
     }
 
+    public function addLine(string $file, string $manifest)
+    {   
+        if (!is_file($file)) {
+            throw new FileNotFound("Could not find files {$file}");
+        } 
+        
+        if (!is_file($manifest)) {
+            throw new FileNotFound("Could not find files {$manifest}");
+        } 
+        
+        $manifest_pathinfo = pathinfo($manifest);
+        $manifest_dir = $manifest_pathinfo['dirname'];
+
+        $line = join('  ', [hash_file($this->algorithm, $file), $this->trimPath($this->getRelativePath($manifest_dir, $file)."\n")]);
+
+        file_put_contents($manifest, $line, FILE_APPEND);
+    }
+
     public function verifyManifest($manifest)
     {
         if (!is_file($manifest) && !is_readable($manifest)) {
@@ -89,7 +107,7 @@ class Hash
         return $this->checkLines();
     }
 
-    private function readLines()
+    public function readLines()
     {
         $fh = fopen($this->manifest, "r");
         $sep = '';
@@ -107,6 +125,15 @@ class Hash
             $this->lines[$lc]['binary'] = $sep === ' *' ? true : false;
         }
         fclose($fh);
+    }
+
+    public function manifestContainsHash(string $manifest, string $hash) : string
+    {
+        if (!is_file($manifest) && !is_readable($manifest)) {
+            throw new FileNotFound("could not find or open file {$manifest}");
+        }
+        $this->manifest = realpath($manifest);
+        $this->readLines();
     }
 
     private function checkLines()
