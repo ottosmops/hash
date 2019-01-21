@@ -29,7 +29,7 @@ You can pass a filename to the ```createManifest``` method. The filename must be
 
 ```php
 $md5 = New Hash();
-$md5->createMd5sums($dir, "myfilename", false);
+$md5->createManifest($dir, "myfilename", false);
 ```
 
 
