@@ -69,8 +69,8 @@ class HashTest extends TestCase
     {
         $hash = New Hash();
         $hash->createManifest($this->temp);
-        $this->assertTrue($hash->verifyManifest($this->temp .'manifest'));
-        unlink ($this->temp .'manifest');
+        $this->assertTrue($hash->verifyManifest($this->temp .'manifest-md5.txt'));
+        unlink ($this->temp .'manifest-md5.txt');
     }
 
     /** @test */
@@ -86,9 +86,9 @@ class HashTest extends TestCase
     public function it_can_create_manifest_flat()
     {
         $hash = New Hash();
-        $this->assertSame($hash->createManifest($this->temp, 'manifest', false), 2);
-        $this->assertTrue($hash->verifyManifest($this->temp .'manifest'));
-        unlink ($this->temp .'manifest');
+        $this->assertSame($hash->createManifest($this->temp, 'manifest-md5.txt', false), 2);
+        $this->assertTrue($hash->verifyManifest($this->temp .'manifest-md5.txt'));
+        unlink ($this->temp .'manifest-md5.txt');
     }
 
     /** @test */
@@ -98,5 +98,20 @@ class HashTest extends TestCase
         $hash = New Hash();
         $this->assertFalse($hash->verifyManifest($manifest));
         $this->assertSame($hash->messages[1], 'error line 1: could not verify line d41d8cd98f00b204e9800998ecf8427e  test');
+    }
+
+    /** @test */
+    public function it_finds_a_hash()
+    {
+        $manifest = $this->valide_dir . 'manifest';
+        $hash = New Hash();
+        $search = 'ad0234829205b9033196ba818f7a872b';
+        $expected = 'test2';
+        $actual = $hash->manifestContainsHash($manifest, $search);
+        $this->assertEquals($expected, $actual);
+        $expected = 'false';
+        $search = 'bd0234829205b9033196ba818f7a872b';
+        $actual = $hash->manifestContainsHash($manifest, $search);
+        $this->assertFalse($actual);
     }
 }

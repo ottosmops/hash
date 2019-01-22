@@ -62,7 +62,9 @@ class Hash
             throw new DirNotFound("Could not find directory {$dir}");
         }
 
-        $this->manifest = ($manifest == '') ? $this->dir . 'manifest' : $this->dir . $manifest;
+        $this->manifest = ($manifest == '') 
+                        ? $this->dir . 'manifest-' .$this->algorithm .'.txt' 
+                        : $this->dir . $manifest;
 
         $manifest_pathinfo = pathinfo($this->manifest);
         $manifest_dir = $manifest_pathinfo['dirname'];
@@ -107,6 +109,23 @@ class Hash
         return $this->checkLines();
     }
 
+    // returns the first path found
+    public function manifestContainsHash(string $manifest, string $hash)
+    {
+        if (!is_file($manifest) && !is_readable($manifest)) {
+            throw new FileNotFound("could not find or open file {$manifest}");
+        }
+        $this->manifest = realpath($manifest);
+        $this->readLines();
+
+        foreach($this->lines as $line) {
+            if ($hash === $line[0]) {
+                return $line[1];
+            }
+        }
+        return false;
+    }
+
     public function readLines()
     {
         $fh = fopen($this->manifest, "r");
@@ -122,19 +141,14 @@ class Hash
             $sep = $this->detectSeparator($line);
 
             $this->lines[$lc] = explode($sep, trim($line));
-            $this->lines[$lc]['binary'] = $sep === ' *' ? true : false;
+            // we dont use this yet
+            // $this->lines[$lc]['binary'] = $sep === ' *' ? true : false;
         }
+
         fclose($fh);
     }
 
-    public function manifestContainsHash(string $manifest, string $hash) : string
-    {
-        if (!is_file($manifest) && !is_readable($manifest)) {
-            throw new FileNotFound("could not find or open file {$manifest}");
-        }
-        $this->manifest = realpath($manifest);
-        $this->readLines();
-    }
+
 
     private function checkLines()
     {
