@@ -4,7 +4,6 @@ namespace Ottosmops\Hash\Test;
 use Ottosmops\Hash\Hash;
 
 use Ottosmops\Hash\Exceptions\FileNotFound;
-use Ottosmops\Hash\Exceptions\SeparatorNotFound;
 
 use PHPUnit\Framework\TestCase;
 
