@@ -4,6 +4,7 @@ php:
   - '7.1'
   - '7.2'
   - '7.3'
+  - '7.4'
 
 before_script:
   - travis_retry composer self-update
@@ -11,4 +12,3 @@ before_script:
 
 script:
   - vendor/bin/phpunit
-
