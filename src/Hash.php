@@ -62,8 +62,8 @@ class Hash
             throw new DirNotFound("Could not find directory {$dir}");
         }
 
-        $this->manifest = ($manifest == '') 
-                        ? $this->dir . 'manifest-' .$this->algorithm .'.txt' 
+        $this->manifest = ($manifest == '')
+                        ? $this->dir . 'manifest-' .$this->algorithm .'.txt'
                         : $this->dir . $manifest;
 
         $manifest_pathinfo = pathinfo($this->manifest);
@@ -82,14 +82,14 @@ class Hash
     }
 
     public function addLine(string $file, string $manifest)
-    {   
+    {
         if (!is_file($file)) {
             throw new FileNotFound("Could not find files {$file}");
-        } 
+        }
         
         if (!is_file($manifest)) {
             throw new FileNotFound("Could not find files {$manifest}");
-        } 
+        }
         
         $manifest_pathinfo = pathinfo($manifest);
         $manifest_dir = $manifest_pathinfo['dirname'];
@@ -118,7 +118,7 @@ class Hash
         $this->manifest = realpath($manifest);
         $this->readLines();
 
-        foreach($this->lines as $line) {
+        foreach ($this->lines as $line) {
             if ($hash === $line[0]) {
                 return $line[1];
             }
